@@ -1,6 +1,8 @@
-# Pusher Javascript Client
+# pusher-websocket-js-iso
 
-This library is an open source client that allows Javascript web browser clients to connect to the [Pusher](http://pusher.com/) WebSocket API. It also supports fallback to HTTP connection transports. It is highly recommended that you use the hosted version of this file to stay up to date with the latest updates.
+EXPERIMENTAL Isomorphic WebSocket client for [Pusher](http://pusher.com/).
+
+Supports several JavaScript runtimes, including web browsers and Node.js.
 
 ## Usage overview
 
@@ -19,32 +21,22 @@ The following topics are covered:
 
 ## Installation
 
-### CDN
-
-Via the Pusher CDN:
-
-```html
-<script src="//js.pusher.com/3.0/pusher.min.js"></script>
-```
-
 ### Bower
 
-Or via [Bower](http://bower.io/):
-
 ```
-bower install pusher
+bower install pusher-websocket-iso
 ```
 
 and then
 
 ```html
-<script src="bower_components/dist/pusher.min.js"></script>
+<script src="bower_components/dist/web/pusher.js"></script>
 ```
 
 ### NPM
 
 ```
-npm install pusher-js
+npm install pusher-websocket-iso
 ```
 
 ## Initialization
@@ -272,10 +264,6 @@ Remove previously-bound handlers from an object. Only handlers that match all of
 
 It is possible to bind to all events at either the global or channel level by using the method `bind_all`. This is used for debugging, but may have other utilities.
 
-## Batching auth requests (aka multi-auth)
-
-Currently, pusher-js itself does not support authenticating multiple channels in one HTTP request. However, thanks to @dirkbonhomme you can use the [pusher-js-auth](https://github.com/dirkbonhomme/pusher-js-auth) plugin that buffers subscription requests and sends auth requests to your endpoint in batches.
-
 ## Default events
 
 There are a number of events which are used internally, but can also be of use elsewhere:
@@ -289,92 +277,12 @@ Most browsers have a limit of 6 simultaneous connections to a single domain. Thi
 
 ## Developing
 
-Use Bundler to install all development dependencies
-
-    bundle install
-
-and create a local config file
-
-    mv config/config.yml.example config/config.yml # and edit
-
-Run a development server which serves bundled javascript from <http://localhost:5555/pusher.js> so that you can edit files in /src freely.
-
-    bundle exec jbundle server
-
-In order to build the minified versions:
-
-    ENVIRONMENT=development rake build
-
-If you wish to host the javascript on your own server you need to change [:js][:host] in `config.yml` and then rebuild.
+TODO
 
 ## Building
 
-`./JFile` declares all bundles, src dir and target dir. See [https://github.com/ismasan/jbundle](https://github.com/ismasan/jbundle)
-Define the version number in JFile (should be in the format 1.2.3).
-
-    rake build
-
-That writes source and minified versions of each bundle declared in the JFile into versioned directories. For example if the JFile says
-
-    version '1.7.1'
-
-Then rake build will put copies of the files in ./dist/1.7.1/ and ./dist/1.7/
-
-However for a prerelease
-
-    version '1.7.2-pre'
-
-It will only write to the full, suffixed directory ./dist/1.7.2-pre
-
-This is so prereleases don't overwrite the previous stable release.
+TODO
 
 ## Testing
 
-### Jasmine
-
-Jasmine test suite contains two types of tests:
-
-1. unit tests,
-2. integration tests.
-
-Unit tests are simple, fast and don't need any external dependencies. Integration tests usually connect to production and js-integration-api servers and can use a local server for loading JS files, so they need an Internet connection to work.
-
-There are several ways to run jasmine tests. All commands mentioned below also start a JBundle server, which is required for integration tests.
-
-Please make sure you run bundler before running any of following commands.
-
-    bundle install
-
-#### Run tests manually in a browser
-
-First, start the jasmine and JSONP integration servers:
-
-    scripts/jasmine
-
-Then open any browser and navigate to <http://localhost:8888/> - it will run both unit and integration tests.
-
-#### Run headless tests
-
-Running headless tests is very convenient for development, especially when using guard. Make sure you have PhantomJS installed - you can use `brew install phantomjs` on OS X. Start jasmine and guard:
-
-    scripts/guard
-
-Tests will be run automatically in the terminal. Guard watches JS files and specs and re-runs aproppriate tests whenever you save any changes. Press enter to re-run all tests.
-
-Guard runs only unit tests - partially because PhantomJS does not support WebSockets, partially for convenience.
-
-There's also a JSHint watch, which will validate JS files on save.
-
-#### Run karma
-
-Testacular also runs tests automatically, but it uses actual browsers to execute them. First, install karma npm modules
-
-    npm install
-
-Then start the server, run one of following commands:
-
-    scripts/karma-unit           # runs only unit tests
-    scripts/karma-integration    # runs only integration tests
-    scripts/karma                # runs both unit and integration tests
-
-All configured browsers will be automatically opened and will run all tests. Testacular also re-executes all specs on file changes. After you close the server, browsers will get shut down too.
+TODO
