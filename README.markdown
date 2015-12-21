@@ -2,13 +2,17 @@
 
 EXPERIMENTAL Isomorphic WebSocket client for [Pusher](http://pusher.com/).
 
-Supports several JavaScript runtimes, including web browsers and Node.js.
+Supports several JavaScript runtimes, including web browsers, React Native and Node.js.
+
+For our official JS library, [follow this link](https://github.com/pusher/pusher-js).
 
 ## Usage overview
 
 The following topics are covered:
 
+* Difference to PusherJS
 * Installation
+* Supported Platforms
 * Configuration
 * Global configuration
 * Connection
@@ -18,6 +22,19 @@ The following topics are covered:
   * Globally
   * Per-channel
 * Default events
+
+## Difference to [PusherJS](http://github.com/pusher/pusher-js)
+
+In order for the library to work in non-browser environments, we have had to 
+remove the library's dependency on the DOM. In PusherJS, the DOM is used for JSONp and to dynamically load
+dependencies, such as XHR and SockJS fallbacks.
+
+As a result:
+
+* JSONp channel authorization is no longer supported.
+* SockJS is removed as a fallback. Therefore the library drops compatibility for older browsers
+that do not support XHR.
+* XHR fallbacks are built into the same file and are not dynamically loaded.
 
 ## Installation
 
@@ -37,6 +54,32 @@ and then
 
 ```
 npm install pusher-websocket-iso
+```
+
+## Supported Platforms
+
+### Browser
+
+Install through Bower, or download `dist/web/pusher.js`. For use with UMD, use `dist/web-umd/pusher.js`.
+
+### Web Worker
+
+Download and import `dist/worker/pusher.js`.
+
+### NodeJS
+
+Install the library through NPM and import the module:
+
+```js
+var Pusher = require('pusher-websocket-iso');
+```
+
+### React Native
+
+Install the library through NPM, and add import the build specific to React Native:
+
+```js
+var Pusher = require('pusher-websocket-iso/react-native');
 ```
 
 ## Initialization
@@ -66,38 +109,40 @@ Forces the connection to use encrypted transports.
 
 Endpoint on your server that will return the authentication signature needed for private channels.
 
-#### `authTransport` (String)
-
-Defines how the authentication endpoint, defined using authEndpoint, will be called. There are two options available: `ajax` and `jsonp`.
-
 #### `auth` (Hash)
 
 Allows passing additional data to authorizers. Supports query string params and headers (AJAX only). For example, following will pass `foo=bar` via the query string and `baz: boo` via headers:
 
-    var pusher = new Pusher(API_KEY, {
-      auth: {
-        params: { foo: "bar" },
-        headers: { baz: "boo" }
-      }
-    });
+```js
+var pusher = new Pusher(API_KEY, {
+  auth: {
+    params: { foo: "bar" },
+    headers: { baz: "boo" }
+  }
+});
+```
 
 ##### CSRF
 
 If you require a CSRF header for incoming requests to the private channel authentication endpoint on your server, you should add a CSRF token to the `auth` hash under `headers`. This is applicable to frameworks which apply CSRF protection by default.
 
-    var pusher = new Pusher(API_KEY, {
-      auth: {
-        params: { foo: "bar" },
-        headers: { "X-CSRF-Token": "SOME_CSRF_TOKEN" }
-      }
-    });
+```js
+var pusher = new Pusher(API_KEY, {
+  auth: {
+    params: { foo: "bar" },
+    headers: { "X-CSRF-Token": "SOME_CSRF_TOKEN" }
+  }
+});
+```
 
 #### `cluster` (String)
 
 Allows connecting to a different datacenter by setting up correct hostnames and ports for the connection.
 
-    // will connect to the 'eu' cluster
-    var pusher = new Pusher(API_KEY, { cluster: "eu" });
+```js
+// will connect to the 'eu' cluster
+var pusher = new Pusher(API_KEY, { cluster: "eu" });
+```
 
 #### `disableStats` (Boolean)
 
@@ -107,21 +152,25 @@ Disables stats collection, so that connection metrics are not submitted to Pushe
 
 Specifies which transports should be used by Pusher to establish a connection. Useful for applications running in controlled, well-behaving environments. Available transports: `ws`, `wss`, `xhr_streaming`, `xhr_polling`. Additional transports may be added in the future and without adding them to this list, they will be disabled.
 
-    // will only use WebSockets
-    var pusher = new Pusher(API_KEY, { enabledTransports: ["ws"] });
+```js
+// will only use WebSockets
+var pusher = new Pusher(API_KEY, { enabledTransports: ["ws"] });
+```
 
 #### `disabledTransports` (Array)
 
 Specified which transports must not be used by Pusher to establish a connection. This settings overwrites transports whitelisted via the `enabledTransports` options. Available transports: `ws`, `wss`, `xhr_streaming`, `xhr_polling`. Additional transports may be added in the future and without adding them to this list, they will be enabled.
 
-    // will use all transports except for ws
-    var pusher = new Pusher(API_KEY, { disabledTransports: ["ws"] });
+```js
+// will use all transports except for ws
+var pusher = new Pusher(API_KEY, { disabledTransports: ["ws"] });
 
-    // will only use WebSockets
-    var pusher = new Pusher(API_KEY, {
-      enabledTransports: ["ws", "xhr_streaming"],
-      disabledTransports: ["xhr_streaming"]
-    });
+// will only use WebSockets
+var pusher = new Pusher(API_KEY, {
+  enabledTransports: ["ws", "xhr_streaming"],
+  disabledTransports: ["xhr_streaming"]
+});
+```
 
 #### `wsHost`, `wsPort`, `wssPort`, `httpHost`, `httpPort`, `httpsPort`
 
@@ -141,18 +190,14 @@ Time before the connection is terminated after sending a ping message. Default i
 
 ## Global configuration
 
-### `Pusher.logToConsole` (Boolean)
-
-Enables logging to the browser console via calls to `window.console.log`.
-
-### `Pusher.log` (Function)
+### `Pusher.setLogger` (Function)
 
 Assign a custom log handler for the Pusher library logging. For example:
 
 ```js
-Pusher.log = function(msg) {
+Pusher.setLogger(function(msg) {
   console.log(msg);
-};
+});
 ```
 
 By setting the `log` property you also override the use of `Pusher.enableLogging`.
@@ -161,7 +206,9 @@ By setting the `log` property you also override the use of `Pusher.enableLogging
 
 A connection to Pusher is established by providing your API key to the constructor function:
 
-    var socket = new Pusher(API_KEY);
+```js
+var socket = new Pusher(API_KEY);
+```
 
 This returns a socket object which can then be used to subscribe to channels.
 
@@ -177,7 +224,9 @@ It is also stored within the socket, and used as a token for generating signatur
 
 The default method for subscribing to a channel involves invoking the `subscribe` method of your socket object:
 
-    var my_channel = socket.subscribe('my-channel');
+```js
+var my_channel = socket.subscribe('my-channel');
+```
 
 This returns a Channel object which events can be bound to.
 
@@ -185,31 +234,41 @@ This returns a Channel object which events can be bound to.
 
 Private channels are created in exactly the same way as normal channels, except that they reside in the 'private-' namespace. This means prefixing the channel name:
 
-    var my_channel = socket.subscribe('private-my-channel');
+```js
+var my_channel = socket.subscribe('private-my-channel');
+```
 
 It is possible to access channels by name, through the `channel` function:
 
-    channel = socket.channel('private-my-channel');
+```js
+channel = socket.channel('private-my-channel');
+```
 
 It is possible to access all subscribed channels through the `allChannels` function:
 
-    var channels = socket.allChannels();
-    console.group('Pusher - subscribed to:');
-    for (var i = 0; i < channels.length; i++) {
-        var channel = channels[i];
-        console.log(channel.name);
-    }
-    console.groupEnd();
+```js
+var channels = socket.allChannels();
+console.group('Pusher - subscribed to:');
+for (var i = 0; i < channels.length; i++) {
+    var channel = channels[i];
+    console.log(channel.name);
+}
+console.groupEnd();
+```
 
 ## Unsubscribing from channels
 
 To unsubscribe from a channel, invoke the `unsubscribe` method of your socket object:
 
-    socket.unsubscribe('my-channel');
+```js
+socket.unsubscribe('my-channel');
+```
 
 Unsubscribing from private channels is done in exactly the same way, just with the additional `private-` prefix:
 
-    socket.unsubscribe('private-my-channel');
+```js
+socket.unsubscribe('private-my-channel');
+```
 
 ## Binding to events
 
@@ -219,45 +278,53 @@ Events can be bound to at 2 levels, the global, and per channel. They take a ver
 
 You can attach behaviour to these events regardless of the channel the event is broadcast to. The following is an example of an app that binds to new comments from any channel:
 
-    var socket = new Pusher('MY_API_KEY');
-    var my_channel = socket.subscribe('my-channel');
-    socket.bind('new-comment',
-      function(data) {
-        // add comment into page
-      }
-    );
+```js
+var socket = new Pusher('MY_API_KEY');
+var my_channel = socket.subscribe('my-channel');
+socket.bind('new-comment',
+  function(data) {
+    // add comment into page
+  }
+);
+```
 
 ### Per-channel events
 
 These are bound to a specific channel, and mean that you can reuse event names in different parts of your client application. The following might be an example of a stock tracking app where several channels are opened for different companies:
 
-    var socket = new Pusher('MY_API_KEY');
-    var channel = socket.subscribe('APPL');
-    channel.bind('new-price',
-      function(data) {
-        // add new price into the APPL widget
-      }
-    );
+```js
+var socket = new Pusher('MY_API_KEY');
+var channel = socket.subscribe('APPL');
+channel.bind('new-price',
+  function(data) {
+    // add new price into the APPL widget
+  }
+);
+```
 
 ### Bind event handler with optional context
 
 It is possible to provide a third, optional parameter that is used as the `this` value when calling a handler:
 
-    var context = { title: 'Pusher' };
-    var handler = function(){
-      console.log('My name is ' + this.title);
-    };
-    channel.bind('new-comment', handler, context);
+```js
+var context = { title: 'Pusher' };
+var handler = function(){
+  console.log('My name is ' + this.title);
+};
+channel.bind('new-comment', handler, context);
+```
 
 ### Unbind event handlers
 
 Remove previously-bound handlers from an object. Only handlers that match all of the provided arguments (`eventName`, `handler` or `context`) are removed:
 
-    channel.unbind('new-comment', handler); // removes just `handler` for the `new-comment` event
-    channel.unbind('new-comment'); // removes all handlers for the `new-comment` event
-    channel.unbind(null, handler); // removes `handler` for all events
-    channel.unbind(null, null, context); // removes all handlers for `context`
-    channel.unbind(); // removes all handlers on `channel`
+```js
+channel.unbind('new-comment', handler); // removes just `handler` for the `new-comment` event
+channel.unbind('new-comment'); // removes all handlers for the `new-comment` event
+channel.unbind(null, handler); // removes `handler` for all events
+channel.unbind(null, null, context); // removes all handlers for `context`
+channel.unbind(); // removes all handlers on `channel`
+```
 
 
 ### Binding to everything
